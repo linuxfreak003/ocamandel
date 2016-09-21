@@ -1,2 +1,2 @@
 # mandelbrot
-A mandelbrot picture generator written in OCaml :camel
+A mandelbrot picture generator written in OCaml :camel:
