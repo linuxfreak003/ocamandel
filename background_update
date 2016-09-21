@@ -1,0 +1,5 @@
+#!/bin/bash
+./mandel > test.ppm
+sed -i "s/1920/$(echo "$(head -4 test.ppm|tail -1|wc -w)/3" | bc)/g" test.ppm
+convert test.ppm test.png
+rm test.ppm
