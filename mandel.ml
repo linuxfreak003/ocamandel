@@ -32,7 +32,7 @@ let average_color colors =
     -> average_helper xs (r+x,g+y,b+z) (n+1)
  in average_helper colors (0,0,0) 0;;
 
-let get_color its = match its with
+let get_color its = match its*2 with
 | x when x < 0 -> (0,0,0)
 (*
 | x when x > 768 -> ((x mod 256), (x mod 256), (x mod 256))
@@ -66,12 +66,12 @@ let itermandel (xlow, ylow) (xhigh, yhigh) inc maxIters aa =
 
 let iterstart x1 y1 x2 y2 xsize iters = match (x1, y1, x2, y2) with
 | (x1, y1, x2, y2) when x1 <= x2 && y1 <= y2
-    -> itermandel (x1, y1) (x2, y2) ((x2-.x1)/.xsize) iters 4.0
+    -> itermandel (x1, y1) (x2, y2) ((x2-.x1)/.xsize) iters 2.0
 | (x1, y1, x2, y2) when x2 <= x1 && y1 <= y2
-    -> itermandel (x2, y1) (x1, y2) ((x1-.x2)/.xsize) iters 4.0
+    -> itermandel (x2, y1) (x1, y2) ((x1-.x2)/.xsize) iters 2.0
 | (x1, y1, x2, y2) when x2 <= x1 && y2 <= y1
-    -> itermandel (x2, y2) (x1, y1) ((x1-.x2)/.xsize) iters 4.0
- | _ -> itermandel (x1, y2) (x2, y1) ((x2-.x1)/.xsize) iters 4.0;;
+    -> itermandel (x2, y2) (x1, y1) ((x1-.x2)/.xsize) iters 2.0
+ | _ -> itermandel (x1, y2) (x2, y1) ((x2-.x1)/.xsize) iters 2.0;;
 
 let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ysize) with
 | (_,_,zoom,_,_) when zoom <= 0.0
