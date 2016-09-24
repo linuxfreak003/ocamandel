@@ -1,6 +1,14 @@
+(* Gradient
+ *  To go from R0 -> R1 in N steps
+ *  R = (i * (R1-R0) / (N - 1)) + R0
+ *)
+(* getGradient <start_color> <end_color> steps iters *)
+let getGradient (r0,g0,b0) (r1,g1,b1) n i =
+    (i * ((r1-r0) / (n-1)) + r0, i * ((g1-g0) / (n-1)) + g0, i * ((b1-b0) / (n-1)) + b0);;
+
 let get_color its = match its with
 | x when x < 0 -> (51,51,51)
-| x when x > 150 && x < 400 -> (196, 183, 157)
+| x when x > 200 && x < 300 -> getGradient (110,102,88) (196, 183, 157) 100 ((x-200) mod 100)
 | x when x > 100 && x < 150 -> ((x mod 50)+110, (x mod 50)+102, (x mod 50)+88)
 | x when x > 10 && x < 100 -> (((x mod 100)+84),((x mod 100)+76),((x mod 100)+63))
 | x -> ((x mod 256), (x mod 256),(x mod 256));;
@@ -62,14 +70,14 @@ let itermandel (xlow, ylow) (xhigh, yhigh) inc maxIters aa =
  (* | _ -> print_string " "; print_int (mandelcalc maxIters x y); iter (x+.inc) y *)
  in iter xlow yhigh;;
 
-let iterstart x1 y1 x2 y2 xsize iters = match (x1, y1, x2, y2) with
+let iterstart x1 y1 x2 y2 xsize iters aa = match (x1, y1, x2, y2) with
 | (x1, y1, x2, y2) when x1 <= x2 && y1 <= y2
-    -> itermandel (x1, y1) (x2, y2) ((x2-.x1)/.xsize) iters 3.0
+    -> itermandel (x1, y1) (x2, y2) ((x2-.x1)/.xsize) iters aa
 | (x1, y1, x2, y2) when x2 <= x1 && y1 <= y2
-    -> itermandel (x2, y1) (x1, y2) ((x1-.x2)/.xsize) iters 3.0
+    -> itermandel (x2, y1) (x1, y2) ((x1-.x2)/.xsize) iters aa
 | (x1, y1, x2, y2) when x2 <= x1 && y2 <= y1
-    -> itermandel (x2, y2) (x1, y1) ((x1-.x2)/.xsize) iters 3.0
- | _ -> itermandel (x1, y2) (x2, y1) ((x2-.x1)/.xsize) iters 3.0;;
+    -> itermandel (x2, y2) (x1, y1) ((x1-.x2)/.xsize) iters aa
+ | _ -> itermandel (x1, y2) (x2, y1) ((x2-.x1)/.xsize) iters aa;;
 
 let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ysize) with
 | (_,_,zoom,_,_) when zoom <= 0.0
@@ -77,7 +85,7 @@ let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ys
 | (x,y,_,_,_) when x < (-2.0) || y < (-2.0) || x > 2.0 || y > 2.0
     -> print_string "Out of bounds.\n"
 | (_,_,_,leng,ratio)
--> iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000;;
+-> iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 1.0;;
 
 (* Seed Random number generator *)
 Random.self_init ();;
