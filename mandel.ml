@@ -1,3 +1,10 @@
+let get_color its = match its with
+| x when x < 0 -> (51,51,51)
+| x when x > 150 && x < 400 -> (196, 183, 157)
+| x when x > 100 && x < 150 -> ((x mod 50)+110, (x mod 50)+102, (x mod 50)+88)
+| x when x > 10 && x < 100 -> (((x mod 100)+84),((x mod 100)+76),((x mod 100)+63))
+| x -> ((x mod 256), (x mod 256),(x mod 256));;
+
 (* Mandelbrot calculation *)
 let rec mandel m x y a b i = match (m, a*.a, b*.b, a*.b, i) with
  | (_,aa,bb,_,_) when (aa +. bb) > 4.0 -> i
@@ -31,18 +38,6 @@ let average_color colors =
  | (((x,y,z)::xs), (r,g,b))
     -> average_helper xs (r+x,g+y,b+z) (n+1)
  in average_helper colors (0,0,0) 0;;
-
-let get_color its = match its*2 with
-| x when x < 0 -> (51,51,51)
-(*
-| x when x > 768 -> ((x mod 256), (x mod 256), (x mod 256))
-| x when x > 511 -> ((x mod 256), 0, 0)
-| x when x >= 600 && x < 700 -> ((x mod 100)+150, (x mod 100)+150, (x mod 100)+150)
-*)
-| x when x >= 600 -> ((x mod 100)+100,0,0)
-| x when x >= 400 && x < 600 -> (0, (x mod 100)+100, 0)
-| x when x >= 300 && x < 400 -> (0, 0,(x mod 100)+100)
-| x -> ((x mod 256), (x mod 256),(x mod 256));;
 
 (* Loop for list. average_color (List.map get_color (List.map mandelcalc)) *)
 let mandelaa m x y inc aa =
@@ -92,5 +87,6 @@ print_string "1920 1080\n";;
 (* print_string "20 20\n";; *)
 print_string "255\n";;
 iterstartstart 1920.0 1080.0 (find_interesting 2.0 2.0) ((Random.float 120.0)+.300.0);;
-(* iterstartstart 20.0 20.0 (0.0, 0.0) 1.0;; *)
+(* iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 2000.0;; *)
+(* iterstartstart 20.0 20.0 (-1.5, 0.0) 1.0;; *)
 print_string "\n";;
