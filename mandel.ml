@@ -10,7 +10,7 @@ let mandelcalc m x y = mandel m x y x y 1;;
 let mandelcalcaa m (x, y) = mandel m x y x y 1;;
 
 let rec find_interesting x y = match (x,y) with
-| (x, y) when (mandelcalc 1000 x y) > 950 -> (x, y)
+| (x, y) when (mandelcalc 1000 x y) > 900 -> (x, y)
 | _ -> find_interesting ((Random.float 4.0)-.2.0) ((Random.float 4.0)-.2.0);;
 
 (* Loop from one point to another in 2D space
@@ -33,12 +33,15 @@ let average_color colors =
  in average_helper colors (0,0,0) 0;;
 
 let get_color its = match its*2 with
-| x when x < 0 -> (0,0,0)
+| x when x < 0 -> (51,51,51)
 (*
 | x when x > 768 -> ((x mod 256), (x mod 256), (x mod 256))
 | x when x > 511 -> ((x mod 256), 0, 0)
+| x when x >= 600 && x < 700 -> ((x mod 100)+150, (x mod 100)+150, (x mod 100)+150)
 *)
-| x when x > 255 -> ((x mod 256), (x mod 256),(x mod 256))
+| x when x >= 600 -> ((x mod 100)+100,0,0)
+| x when x >= 400 && x < 600 -> (0, (x mod 100)+100, 0)
+| x when x >= 300 && x < 400 -> (0, 0,(x mod 100)+100)
 | x -> ((x mod 256), (x mod 256),(x mod 256));;
 
 (* Loop for list. average_color (List.map get_color (List.map mandelcalc)) *)
@@ -66,12 +69,12 @@ let itermandel (xlow, ylow) (xhigh, yhigh) inc maxIters aa =
 
 let iterstart x1 y1 x2 y2 xsize iters = match (x1, y1, x2, y2) with
 | (x1, y1, x2, y2) when x1 <= x2 && y1 <= y2
-    -> itermandel (x1, y1) (x2, y2) ((x2-.x1)/.xsize) iters 2.0
+    -> itermandel (x1, y1) (x2, y2) ((x2-.x1)/.xsize) iters 3.0
 | (x1, y1, x2, y2) when x2 <= x1 && y1 <= y2
-    -> itermandel (x2, y1) (x1, y2) ((x1-.x2)/.xsize) iters 2.0
+    -> itermandel (x2, y1) (x1, y2) ((x1-.x2)/.xsize) iters 3.0
 | (x1, y1, x2, y2) when x2 <= x1 && y2 <= y1
-    -> itermandel (x2, y2) (x1, y1) ((x1-.x2)/.xsize) iters 2.0
- | _ -> itermandel (x1, y2) (x2, y1) ((x2-.x1)/.xsize) iters 2.0;;
+    -> itermandel (x2, y2) (x1, y1) ((x1-.x2)/.xsize) iters 3.0
+ | _ -> itermandel (x1, y2) (x2, y1) ((x2-.x1)/.xsize) iters 3.0;;
 
 let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ysize) with
 | (_,_,zoom,_,_) when zoom <= 0.0
