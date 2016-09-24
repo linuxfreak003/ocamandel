@@ -4,14 +4,16 @@
  *)
 (* getGradient <start_color> <end_color> steps iters *)
 let getGradient (r0,g0,b0) (r1,g1,b1) n i =
-    (i * ((r1-r0) / (n-1)) + r0, i * ((g1-g0) / (n-1)) + g0, i * ((b1-b0) / (n-1)) + b0);;
+    (int_of_float (float i *. (float (r1-r0) /. float (n-1))) + r0,
+    int_of_float (float i *. (float (g1-g0) /. float (n-1))) + g0,
+    int_of_float (float i *. (float (b1-b0) /. float (n-1))) + b0);;
 
 let get_color its = match its with
-| x when x < 0 -> (51,51,51)
-| x when x > 200 && x < 300 -> getGradient (110,102,88) (196, 183, 157) 100 ((x-200) mod 100)
-| x when x > 100 && x < 150 -> ((x mod 50)+110, (x mod 50)+102, (x mod 50)+88)
-| x when x > 10 && x < 100 -> (((x mod 100)+84),((x mod 100)+76),((x mod 100)+63))
-| x -> ((x mod 256), (x mod 256),(x mod 256));;
+| x when x < 0 -> (0,0,0)
+| x when x >= 0 && x < 300 -> getGradient (0,0,100) (255, 255, 255) 300 x
+| x when x >= 300 && x < 350 -> getGradient (255, 255, 255) (255,255,100) 50 ((x-300) mod 50)
+| x when x >= 350 && x < 450 -> getGradient (255, 255, 100) (255,0,0) 100 ((x-350) mod 100)
+| x -> getGradient (255,0,0) (255,255,255) 500 ((x-450) mod 500);;
 
 (* Mandelbrot calculation *)
 let rec mandel m x y a b i = match (m, a*.a, b*.b, a*.b, i) with
@@ -85,7 +87,7 @@ let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ys
 | (x,y,_,_,_) when x < (-2.0) || y < (-2.0) || x > 2.0 || y > 2.0
     -> print_string "Out of bounds.\n"
 | (_,_,_,leng,ratio)
--> iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 1.0;;
+-> iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 3.0;;
 
 (* Seed Random number generator *)
 Random.self_init ();;
@@ -95,6 +97,6 @@ print_string "1920 1080\n";;
 (* print_string "20 20\n";; *)
 print_string "255\n";;
 iterstartstart 1920.0 1080.0 (find_interesting 2.0 2.0) ((Random.float 120.0)+.300.0);;
-(* iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 2000.0;; *)
-(* iterstartstart 20.0 20.0 (-1.5, 0.0) 1.0;; *)
+(*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 2000.0;;*)
+(*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 400.0;;*)
 print_string "\n";;
