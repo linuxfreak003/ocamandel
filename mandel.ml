@@ -1,4 +1,9 @@
-open Printf
+open Printf;;
+(*
+open List;;
+let foldl = fold_left;;
+let foldr = fold_right;;
+ *)
 (* Gradient
  *  To go from R0 -> R1 in N steps
  *  R = (i * (R1-R0) / (N - 1)) + R0
