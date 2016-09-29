@@ -1,3 +1,9 @@
+open Printf;;
+(*
+open List;;
+let foldl = fold_left;;
+let foldr = fold_right;;
+ *)
 (* Gradient
  *  To go from R0 -> R1 in N steps
  *  R = (i * (R1-R0) / (N - 1)) + R0
@@ -9,10 +15,10 @@ let getGradient (r0,g0,b0) (r1,g1,b1) n i =
     int_of_float (float i *. (float (b1-b0) /. float (n-1))) + b0);;
 
 let get_color its = match its with
-| x when x < 0 -> (0,0,0)
-| x when x >= 0 && x < 200 -> getGradient (0,0,100) (255, 255, 255) 200 x
-| x when x >= 200 && x < 350 -> getGradient (255, 255, 255) (255,255,100) 150 ((x-200) mod 150)
-| x -> getGradient (255, 255, 100) (255,0,0) 650 ((x-350) mod 650);;
+| (-1) -> (0,0,0)
+| x when x < 400 -> getGradient (0,100,255) (255,255,255) 400 x
+| x when x < 700 -> getGradient (255,255,255) (0,100,255) 300 ((x-400) mod 300)
+| x -> getGradient (0,100,255) (255,255,255) 300 ((x-700) mod 300);;
 
 (* Mandelbrot calculation *)
 let rec mandel m x y a b i = match (m, a*.a, b*.b, a*.b, i) with
@@ -25,8 +31,8 @@ let mandelcalc m x y = mandel m x y x y 1;;
 
 let mandelcalcaa m (x, y) = mandel m x y x y 1;;
 
-let rec find_interesting x y = match (x,y) with
-| (x, y) when (mandelcalc 1000 x y) > 900 -> (x, y)
+let rec find_interesting x y = match (mandelcalc 1000 x y) with
+| (i) when i > 900 && i < 1000 -> (x, y)
 | _ -> find_interesting ((Random.float 4.0)-.2.0) ((Random.float 4.0)-.2.0);;
 
 (* Loop from one point to another in 2D space
@@ -56,12 +62,6 @@ let mandelaa m x y inc aa =
 let print_color c = match c with
  | (r,g,b) -> Printf.printf "%d %d %d" r g b;;
 
-(* This prints out an r g b value for each iteration 
-let print_color_val x = match x with
-| x when x < 0 -> print_string "100 0 0"
-| _ -> Printf.printf "%3d %3d %3d" (x mod 255 + 1) (x mod 255 + 1) (x mod 255 + 1);;
- *)
-
 let itermandel (xlow, ylow) (xhigh, yhigh) inc maxIters aa =
  let rec iter x y = match (x, y) with
  | (_, y) when y <= ylow -> print_string "\n"
@@ -70,6 +70,11 @@ let itermandel (xlow, ylow) (xhigh, yhigh) inc maxIters aa =
  | _ -> print_string " "; print_color (mandelaa maxIters x y inc aa); iter (x+.inc) y
  (* | _ -> print_string " "; print_int (mandelcalc maxIters x y); iter (x+.inc) y *)
  in iter xlow yhigh;;
+
+let appendFile fname s =
+    let out = open_out_gen [Open_wronly; Open_append; Open_creat; Open_text] 0o666 fname in
+    output_string out s;
+    close_out out;;
 
 let iterstart x1 y1 x2 y2 xsize iters aa = match (x1, y1, x2, y2) with
 | (x1, y1, x2, y2) when x1 <= x2 && y1 <= y2
@@ -86,16 +91,18 @@ let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ys
 | (x,y,_,_,_) when x < (-2.0) || y < (-2.0) || x > 2.0 || y > 2.0
     -> print_string "Out of bounds.\n"
 | (_,_,_,leng,ratio)
--> iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 3.0;;
+-> appendFile "points.log" (sprintf "x:%f y:%f zoom:%f\n" x y zoom);
+iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 6.0;;
 
-(* Seed Random number generator *)
-Random.self_init ();;
-(* Print out PPM file *)
-print_string "P3\n";;
-print_string "1920 1080\n";;
-(* print_string "20 20\n";; *)
-print_string "255\n";;
-iterstartstart 1920.0 1080.0 (find_interesting 2.0 2.0) ((Random.float 120.0)+.300.0);;
-(*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 2000.0;;*)
-(*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 400.0;;*)
-print_string "\n";;
+let () =
+    (* Seed Random number generator *)
+    Random.self_init ();;
+    (* Print out PPM file *)
+    print_string "P3\n";;
+    print_string "1920 1080\n";;
+    (* print_string "20 20\n";; *)
+    print_string "255\n";;
+    iterstartstart 1920.0 1080.0 (find_interesting 2.0 2.0) ((Random.float 120.0)+.1000.0);;
+    (*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 2000.0;;*)
+    (*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 400.0;;*)
+    print_string "\n";;
