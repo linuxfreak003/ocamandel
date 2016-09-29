@@ -16,8 +16,9 @@ let getGradient (r0,g0,b0) (r1,g1,b1) n i =
 
 let get_color its = match its with
 | (-1) -> (0,0,0)
-| x when x < 600 -> getGradient (0,0,0) (0,100,255) 600 x
-| x -> getGradient (0,100,255) (255,255,255) 400 ((x-600) mod 400);;
+| x when x < 400 -> getGradient (0,100,255) (255,255,255) 400 x
+| x when x < 700 -> getGradient (255,255,255) (0,100,255) 300 ((x-400) mod 300)
+| x -> getGradient (0,100,255) (255,255,255) 300 ((x-700) mod 300);;
 
 (* Mandelbrot calculation *)
 let rec mandel m x y a b i = match (m, a*.a, b*.b, a*.b, i) with
