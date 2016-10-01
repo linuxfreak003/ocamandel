@@ -1,4 +1,9 @@
-open Printf
+open Printf;;
+(*
+open List;;
+let foldl = fold_left;;
+let foldr = fold_right;;
+ *)
 (* Gradient
  *  To go from R0 -> R1 in N steps
  *  R = (i * (R1-R0) / (N - 1)) + R0
@@ -11,7 +16,9 @@ let getGradient (r0,g0,b0) (r1,g1,b1) n i =
 
 let get_color its = match its with
 | (-1) -> (0,0,0)
-| x -> getGradient (0,0,0) (0,255,255) 1000 x;;
+| x when x < 400 -> getGradient (0,100,255) (255,255,255) 400 x
+| x when x < 700 -> getGradient (255,255,255) (0,100,255) 300 ((x-400) mod 300)
+| x -> getGradient (0,100,255) (255,255,255) 300 ((x-700) mod 300);;
 
 (* Mandelbrot calculation *)
 let rec mandel m x y a b i = match (m, a*.a, b*.b, a*.b, i) with
@@ -24,8 +31,8 @@ let mandelcalc m x y = mandel m x y x y 1;;
 
 let mandelcalcaa m (x, y) = mandel m x y x y 1;;
 
-let rec find_interesting x y = match (x,y) with
-| (x, y) when (mandelcalc 1000 x y) > 900 -> (x, y)
+let rec find_interesting x y = match (mandelcalc 1000 x y) with
+| (i) when i > 900 && i < 1000 -> (x, y)
 | _ -> find_interesting ((Random.float 4.0)-.2.0) ((Random.float 4.0)-.2.0);;
 
 (* Loop from one point to another in 2D space
