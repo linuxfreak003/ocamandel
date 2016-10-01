@@ -11,10 +11,7 @@ let getGradient (r0,g0,b0) (r1,g1,b1) n i =
 
 let get_color its = match its with
 | (-1) -> (0,0,0)
-| x when x >= 0 && x < 300 -> getGradient (0,0,100) (255, 255, 255) 300 x
-| x when x >= 300 && x < 350 -> getGradient (255, 255, 255) (255,0,0) 50 ((x-300) mod 50)
-| x when x >= 350 && x < 450 -> getGradient (255, 0, 0) (255,255,100) 100 ((x-350) mod 100)
-| x -> getGradient (255,255,100) (255,255,255) 500 ((x-450) mod 500);;
+| x -> getGradient (0,0,0) (0,255,255) 1000 x;;
 
 (* Mandelbrot calculation *)
 let rec mandel m x y a b i = match (m, a*.a, b*.b, a*.b, i) with
@@ -88,7 +85,7 @@ let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ys
     -> print_string "Out of bounds.\n"
 | (_,_,_,leng,ratio)
 -> appendFile "points.log" (sprintf "x:%f y:%f zoom:%f\n" x y zoom);
-iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 6.0;;
+iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 3.0;;
 
 let () =
     (* Seed Random number generator *)
