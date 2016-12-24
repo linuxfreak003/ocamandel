@@ -97,7 +97,7 @@ let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ys
     -> print_string "Out of bounds.\n"
 | (_,_,_,leng,ratio)
 -> appendFile "points.log" (sprintf "x:%f y:%f zoom:%f\n" x y zoom);
-iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 1.0;;
+iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 3.0;;
 
 let () =
     (* Seed Random number generator *)
