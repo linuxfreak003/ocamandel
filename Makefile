@@ -2,5 +2,5 @@ mandel: mandel.ml
 	ocamlopt -o mandel mandel.ml
 
 clean:
-	rm *.cmi *.cmo *.cmx *.o
+	rm *.cmi *.cmx *.o
 	rm mandel
