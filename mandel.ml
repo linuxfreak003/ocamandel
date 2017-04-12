@@ -16,9 +16,17 @@ let getGradient (r0,g0,b0) (r1,g1,b1) n i =
 
 let get_color its = match its with
 | (-1) -> (0,0,0)
-| x -> getGradient (0,0,255) (255,255,255) 1000 x;;
+| x when x < 300 -> getGradient (0,100,255) (255,255,255) 300 x
+| x when x < 600 -> getGradient (255,255,255) (255,0,0) 300 (x - 300)
+| x -> getGradient (255,0,0) (255,255,0) 400 (x-600);;
+(* Christmas
+| x -> getGradient (0,0,255) (255,255,255) 500 (x-500);;
+| x when x < 100 -> getGradient (255,255,255) (255,0,0) 100 x
+| x when x < 300 -> getGradient (255,255,255) (0,255,0) 200 (x-100)
+| x when x < 600 -> getGradient (255,255,255) (0,0,255) 300 (x-300)
+| x -> getGradient (0,0,255) (255,255,255) 400 (x-600);;
+*)
 (*
-| x when x < 400 -> getGradient (0,100,255) (255,255,255) 400 x
 | x when x < 700 -> getGradient (255,255,255) (0,100,255) 300 ((x-400) mod 300)
 | x -> getGradient (0,100,255) (255,255,255) 300 ((x-700) mod 300);;
 *)
@@ -64,7 +72,7 @@ let average_color colors =
 (* Loop for list. average_color (List.map get_color (List.map mandelcalc)) *)
 let mandelaa m x y inc aa =
  match (inc/.aa, x-.(inc/.2.0)+.((inc/.aa)/.2.0), y-.(inc/.2.0)+.((inc/.aa)/.2.0), x+.(inc/.2.0)-.((inc/.aa)/.2.0), y+.(inc/.2.0)-.((inc/.aa)/.2.0)) with
- | (dx, lx,ly, hx,hy) -> average_color (List.map get_color (List.map (julia m) (loop (lx,ly) (hx,hy) dx)));;
+ | (dx, lx,ly, hx,hy) -> average_color (List.map get_color (List.map (mandelcalcaa m) (loop (lx,ly) (hx,hy) dx)));;
 
 let print_color c = match c with
  | (r,g,b) -> Printf.printf "%d %d %d" r g b;;
@@ -97,19 +105,20 @@ let iterstartstart xsize ysize (x, y) zoom = match (x,y,zoom,4.0/.zoom,xsize/.ys
     -> print_string "Out of bounds.\n"
 | (_,_,_,leng,ratio)
 -> appendFile "points.log" (sprintf "x:%f y:%f zoom:%f\n" x y zoom);
-iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 3.0;;
+iterstart (x-.leng/.2.0) (y-.leng/.2.0/.ratio) (x+.leng/.2.0) (y+.leng/.2.0/.ratio) xsize 1000 4.0;;
 
 let () =
     (* Seed Random number generator *)
-    Random.self_init ();;
+    Random.self_init ();
     (* Print out PPM file *)
-    print_string "P3\n";;
-    print_string "1920 1080\n";;
+    print_string "P3\n";
+    print_string "1920 1080\n";
     (* print_string "20 20\n";; *)
-    print_string "255\n";;
-    iterstartstart 1920.0 1080.0 (0.0, 0.0) 100.0;;
+    print_string "255\n";
+    iterstartstart 1920.0 1080.0 (find_interesting 2.0 2.0) ((Random.float 120.0)+.1000.0);
 (*
-    iterstartstart 1920.0 1080.0 (find_interesting 2.0 2.0) ((Random.float 120.0)+.1000.0);;
+    iterstartstart 1920.0 1080.0 (0.0, 0.0) 100.0;;
+    iterstartstart 1920.0 1080.0 (-0.394372, -0.587819) 1049.741013;
 *)
     (*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 2000.0;;*)
     (*iterstartstart 1920.0 1080.0 (-1.5018, 0.0) 400.0;;*)
